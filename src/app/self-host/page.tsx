@@ -15,7 +15,7 @@ export const metadata: Metadata = pageMeta({
     "Run AnyPress on a server you choose: free to do yourself, or we set it up and look after it. For businesses that sell websites and companies that keep their sites on their own servers.",
 });
 
-const REPO = "https://github.com/hamchowderr/waas-provisioning-api";
+const REPO = "https://github.com/otaku-solutions/anypress-api";
 const INSTALLER_DOCS = `${REPO}/blob/main/install/README.md`;
 const GUIDE = `${REPO}/blob/main/docs/self-hosting.md`;
 

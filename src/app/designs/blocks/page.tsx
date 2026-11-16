@@ -14,7 +14,7 @@ export const metadata: Metadata = pageMeta({
     "Popups, carousels, before-and-after sliders, countdowns, maps, a location finder and more, on every AnyPress site. Try each one live in your browser.",
 });
 
-const BLOCKS_REPO = "https://github.com/hamchowderr/anypress-blocks";
+const BLOCKS_REPO = "https://github.com/otaku-solutions/anypress-blocks";
 
 const TRAITS: { drawing: DrawingName; title: string; body: string }[] = [
   {

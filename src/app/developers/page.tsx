@@ -11,7 +11,7 @@ export const metadata: Metadata = pageMeta({
   description: "Create and manage WordPress sites from your own app with the AnyPress API, SDKs, webhooks and MCP connector.",
 });
 
-const API_REPO = "https://github.com/hamchowderr/waas-provisioning-api";
+const API_REPO = "https://github.com/otaku-solutions/anypress-api";
 
 const WHO = ["SaaS teams", "Platforms that give each customer a site", "Developers at web studios", "Hosts", "No-code builders"];
 

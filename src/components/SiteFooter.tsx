@@ -27,7 +27,7 @@ const COLUMNS = [
       { href: "/ai", label: "AnyPress in your AI app" },
       { href: "/developers", label: "For developers" },
       { href: "/self-host", label: "Run it yourself" },
-      { href: "https://github.com/hamchowderr/waas-plugins", label: "Open source code" },
+      { href: "https://github.com/otaku-solutions/anypress-plugins", label: "Open source code" },
     ],
   },
   {

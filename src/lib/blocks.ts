@@ -1,7 +1,7 @@
 import { tryBlueprint } from "@/lib/try";
 
 /**
- * The blocks in AnyPress Blocks (hamchowderr/anypress-blocks), with the demo page each one has in WordPress
+ * The blocks in AnyPress Blocks (otaku-solutions/anypress-blocks), with the demo page each one has in WordPress
  * Playground (demo/blueprints/<slug>.json in that repository). Screenshots in public/designs/blocks/<slug>.webp are
  * from that demo.
  */
@@ -25,7 +25,7 @@ export const BLOCKS: Block[] = [
   { slug: "age-check", title: "Age check", body: "Asks visitors to confirm their age before they see the site, for shops selling age-restricted goods." },
 ];
 
-const RAW = "https://raw.githubusercontent.com/hamchowderr/";
+const RAW = "https://raw.githubusercontent.com/otaku-solutions/";
 
 /** Opens a kit's example site on our /try page (WordPress Playground in the browser), on the latest theme and blocks. */
 export const kitPlayground = (slug: string, name = "Example site") => tryBlueprint(`${RAW}anypress-theme/main/demo/${slug}/blueprint.json`, name);

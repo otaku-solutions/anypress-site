@@ -7,7 +7,7 @@ It's a headless front end built with Next.js. Checkout stays on the AnyPress Wor
 payments. Plan buttons link to FluentCart's instant checkout on the shop.
 
 **Your websites** (`/account`): customers sign in on the shop (OAuth 2.0 with PKCE, see the
-[account API docs](https://github.com/hamchowderr/waas-plugins/blob/main/docs/account-api.md)) and
+[account API docs](https://github.com/otaku-solutions/anypress-plugins/blob/main/docs/account-api.md)) and
 come back here to see their websites and log in to them. Tokens stay on this site's server in an
 encrypted, httpOnly cookie. Until the account settings below are set, "Sign in" links to the shop's
 own account page instead.
