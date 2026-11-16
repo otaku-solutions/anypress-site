@@ -15,8 +15,8 @@ export const metadata: Metadata = pageMeta({
     "Sixteen ready-made looks for different kinds of business, plus popups, countdowns, before-and-after sliders, maps and more. Switch your site's whole look in one click.",
 });
 
-const THEME_REPO = "https://github.com/hamchowderr/anypress-theme";
-const BLOCKS_REPO = "https://github.com/hamchowderr/anypress-blocks";
+const THEME_REPO = "https://github.com/otaku-solutions/anypress-theme";
+const BLOCKS_REPO = "https://github.com/otaku-solutions/anypress-blocks";
 
 const SWITCH: { drawing: DrawingName; title: string; body: ReactNode }[] = [
   {

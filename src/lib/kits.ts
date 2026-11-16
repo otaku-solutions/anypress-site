@@ -1,5 +1,5 @@
 /**
- * The design kits in the AnyPress theme (styles/kit-*.json in hamchowderr/anypress-theme), with each kit's main
+ * The design kits in the AnyPress theme (styles/kit-*.json in otaku-solutions/anypress-theme), with each kit's main
  * colours: primary, second accent, text and background. Screenshots in public/designs/<slug>.webp are the top of each
  * kit's demo home page.
  */

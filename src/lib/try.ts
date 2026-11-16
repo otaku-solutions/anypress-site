@@ -9,7 +9,7 @@ export const PLAYGROUND_REMOTE = "https://demo.anypress.site/remote.html";
 /** Its client library, the same build as remote.html (the client starts only a remote.html served next to it). */
 export const PLAYGROUND_CLIENT = "https://demo.anypress.site/client/index.js";
 
-const RAW = "https://raw.githubusercontent.com/hamchowderr/";
+const RAW = "https://raw.githubusercontent.com/otaku-solutions/";
 
 /**
  * The site types you can try, each with the blueprint that sets up a site as a new store of that type starts

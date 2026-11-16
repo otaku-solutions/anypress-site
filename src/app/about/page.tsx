@@ -18,9 +18,9 @@ const BELIEFS = [
 ];
 
 const CODE = [
-  ["The engine", "Builds, saves and runs every site", "https://github.com/hamchowderr/waas-provisioning-api"],
-  ["The WordPress plugins", "The shop that sells sites, and the helper inside each one", "https://github.com/hamchowderr/waas-plugins"],
-  ["The partner dashboard", "Where partners see and manage their sites", "https://github.com/hamchowderr/waas-dashboard"],
+  ["The engine", "Builds, saves and runs every site", "https://github.com/otaku-solutions/anypress-api"],
+  ["The WordPress plugins", "The shop that sells sites, and the helper inside each one", "https://github.com/otaku-solutions/anypress-plugins"],
+  ["The partner dashboard", "Where partners see and manage their sites", "https://github.com/otaku-solutions/anypress-dashboard"],
 ];
 
 export default function About() {
