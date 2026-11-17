@@ -13,7 +13,7 @@ const RAW = "https://raw.githubusercontent.com/otaku-solutions/";
 
 /**
  * The site types you can try, each with the blueprint that sets up a site as a new store of that type starts
- * (waas-provisioning-api templates/anypress-store/playground). The marketing site's "store" is the template's
+ * (anypress-api templates/anypress-store/playground). The marketing site's "store" is the template's
  * "online-store".
  */
 export const TRY_TYPES = {
@@ -30,8 +30,27 @@ export type TryType = keyof typeof TRY_TYPES;
 export const isTryType = (v: unknown): v is TryType =>
   typeof v === "string" && Object.hasOwn(TRY_TYPES, v);
 
-export const typeBlueprint = (type: TryType) =>
-  `${RAW}waas-provisioning-api/main/templates/anypress-store/playground/${TRY_TYPES[type].blueprint}.json`;
+const templateBlueprint = (name: string) => `${RAW}anypress-api/main/templates/anypress-store/playground/${name}.json`;
+
+export const typeBlueprint = (type: TryType) => templateBlueprint(TRY_TYPES[type].blueprint);
+
+/**
+ * Industry demos: a site type set up for one trade, with its own business, photos and look (the template's
+ * playground/<type>-<demo>.json). They open with their site type's bar, so Make This My Site works as on the type's demo.
+ */
+export const TRY_DEMOS = {
+  "law-office": { name: "Law Office", type: "bookings" },
+} as const satisfies Record<string, { name: string; type: TryType }>;
+
+export type TryDemo = keyof typeof TRY_DEMOS;
+
+export const isTryDemo = (v: unknown): v is TryDemo => typeof v === "string" && Object.hasOwn(TRY_DEMOS, v);
+
+export const demoBlueprint = (demo: TryDemo) =>
+  templateBlueprint(`${TRY_TYPES[TRY_DEMOS[demo].type].blueprint}-${demo}`);
+
+/** An industry demo. */
+export const tryDemo = (demo: TryDemo) => `/try?demo=${demo}`;
 
 /** Only our own blueprints open on /try: a link can't make the page run someone else's. */
 export const isOurBlueprint = (url: unknown): url is string =>

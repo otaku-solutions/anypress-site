@@ -25,6 +25,15 @@ export interface Change {
 
 export const CHANGES: Change[] = [
   {
+    id: "law-office-demo",
+    date: "2026-11-16",
+    kind: "new",
+    title: "Try a bookings site set up for a law office",
+    body: "A new demo shows a Bookings Site made for a law office: one consultation form asks what the client needs, shows only the questions for that, and books them with the right lawyer. It also has the firm's flat fees table, client help desk and six months of posts. Open it from the Bookings Site page.",
+    for: ["bookings"],
+    link: { href: "/try?demo=law-office", label: "Try the Law Office demo" },
+  },
+  {
     id: "demos-not-saved",
     date: "2026-11-13",
     kind: "improved",

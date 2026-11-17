@@ -11,7 +11,7 @@ import { CtaBand, Questions, SectionHead, SidePill } from "@/components/ui";
 import { SITE_DETAILS } from "@/lib/siteDetails";
 import { SITE_TYPES, SIZES, TRIAL_DAYS, VOLUME_RANGE, YEARLY_MONTHS, planUrl, siteLabel, startUrl } from "@/lib/site";
 import { JsonLd } from "@/components/JsonLd";
-import { tryType } from "@/lib/try";
+import { TRY_DEMOS, type TryDemo, tryDemo, tryType } from "@/lib/try";
 import { BASE_URL, breadcrumbLd, faqLd } from "@/lib/seo";
 
 // What people search for, per site type: the page title and the thing they'd call it.
@@ -91,6 +91,8 @@ const LEAD: Record<string, string> = {
 export function SiteTypePage({ type }: { type: string }) {
   const t = SITE_TYPES.find((s) => s.id === type)!;
   const d = SITE_DETAILS[t.id];
+  // This site type's industry demos, for the hero's "Try one set up for" row.
+  const demos = (Object.keys(TRY_DEMOS) as TryDemo[]).filter((x) => TRY_DEMOS[x].type === t.id);
   const others = SITE_TYPES.filter((s) => s.id !== t.id);
   const ex = t.example;
   const label = siteLabel(t);
@@ -171,6 +173,16 @@ export function SiteTypePage({ type }: { type: string }) {
             <WhoChip key={x} label={x} />
           ))}
         </p>
+        {demos.length > 0 && (
+          <p className="made-for">
+            <b>Try one set up for</b>
+            {demos.map((x) => (
+              <Link key={x} href={tryDemo(x)} className="demo-chip">
+                <span>{TRY_DEMOS[x].name} →</span>
+              </Link>
+            ))}
+          </p>
+        )}
         <ol className="hero-steps" aria-label="From order to open">
           {steps.map(([dr, title, sub], i) => (
             <li key={title} style={{ "--i": i } as CSSProperties}>

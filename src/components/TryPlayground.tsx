@@ -12,8 +12,11 @@ import {
   PLAYGROUND_CLIENT,
   PLAYGROUND_REMOTE,
   TRY_TYPES,
+  TRY_DEMOS,
   type TryType,
+  demoBlueprint,
   isOurBlueprint,
+  isTryDemo,
   isTryType,
   prospectSteps,
   prospectType,
@@ -499,6 +502,16 @@ export function TryFromQuery() {
       <TryPlayground
         blueprintUrl={blueprint}
         title={(q.get("title") ?? "Example site").slice(0, 60)}
+      />
+    );
+  const demo = q.get("demo");
+  if (isTryDemo(demo))
+    return (
+      <TryPlayground
+        key={demo}
+        blueprintUrl={demoBlueprint(demo)}
+        title={TRY_DEMOS[demo].name}
+        type={TRY_DEMOS[demo].type}
       />
     );
   const param = q.get("type");
