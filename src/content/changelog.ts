@@ -25,6 +25,15 @@ export interface Change {
 
 export const CHANGES: Change[] = [
   {
+    id: "tables-and-charts",
+    date: "2026-11-18",
+    kind: "new",
+    title: "Tables and charts on any page",
+    body: "Sites now come with Ninja Tables and Ninja Charts. Put a price list, size guide, timetable or menu on any page, and visitors can sort and search it. Turn a table into a bar, line or pie chart, and the chart updates when you change the table.",
+    for: ["website", "bookings", "store", "community", "everything"],
+    link: { href: "/try", label: "See it on a demo site" },
+  },
+  {
     id: "fluentevent",
     date: "2026-11-18",
     kind: "new",
