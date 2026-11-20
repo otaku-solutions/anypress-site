@@ -98,9 +98,9 @@ export default async function GroupPage({ params }: PageProps<"/who/[group]">) {
             <PhoneShot example={ex} className="absolute right-0 bottom-0 w-[22%] max-w-[150px]" />
           </div>
           <div className="ctas">
-            <a href={ex.url} target="_blank" rel="noopener" className="btn btn-paper">
-              Open the example ↗
-            </a>
+            <Link href={ex.url} className="btn btn-paper">
+              Open the example →
+            </Link>
           </div>
         </div>
       </section>

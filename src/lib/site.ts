@@ -73,7 +73,7 @@ export interface SiteType {
 export interface Example {
   name: string;
   what: string;
-  // A live AnyPress site anyone can open.
+  // Its Playground demo on this site (/try?type=<site type>): WordPress running in the visitor's browser.
   url: string;
   // Screenshots in public/examples/: <shot>-desk.webp (1200 wide) and <shot>-phone.webp (390 wide, 2x).
   shot: string;
@@ -103,7 +103,7 @@ export const SITE_TYPES: SiteType[] = [
     example: {
       name: "Juniper Street Bakery",
       what: "A neighbourhood bakery with its menu, opening hours and cake orders.",
-      url: "https://t-c54f40af.stores.anypress.site/",
+      url: "/try?type=website",
       shot: "website",
       tryIt: ["Read the menu", "Find the opening hours", "Order a cake"],
     },
@@ -129,7 +129,7 @@ export const SITE_TYPES: SiteType[] = [
     example: {
       name: "Still Water Yoga",
       what: "A yoga studio where students pick a class and book a spot.",
-      url: "https://t-9687c2a7.stores.anypress.site/",
+      url: "/try?type=bookings",
       shot: "bookings",
       tryIt: ["See the class schedule", "Book a class", "Pick a private session"],
     },
@@ -155,7 +155,7 @@ export const SITE_TYPES: SiteType[] = [
     example: {
       name: "Fern & Clay Ceramics",
       what: "A pottery studio selling handmade mugs, bowls and vases.",
-      url: "https://t-34df1b8c.stores.anypress.site/",
+      url: "/try?type=store",
       shot: "store",
       tryIt: ["Browse the shop", "Open a product", "Add it to the cart"],
     },
@@ -181,7 +181,7 @@ export const SITE_TYPES: SiteType[] = [
     example: {
       name: "Brightside Guitar School",
       what: "Online guitar courses with a members' practice room.",
-      url: "https://t-de81a042.stores.anypress.site/",
+      url: "/try?type=community",
       shot: "courses",
       tryIt: ["See the courses", "Open the members' area", "Read the practice room"],
     },
@@ -207,7 +207,7 @@ export const SITE_TYPES: SiteType[] = [
     example: {
       name: "Riverbend Business Alliance",
       what: "A local business group with memberships, events and a members' forum.",
-      url: "https://t-d6478888.stores.anypress.site/",
+      url: "/try?type=everything",
       shot: "everything",
       tryIt: ["Compare memberships", "See upcoming events", "Visit the members' forum"],
     },

@@ -2,7 +2,7 @@ import type { Example } from "@/lib/site";
 
 /** A browser window showing an example site. Hovering scrolls the page inside to the bottom. */
 export function BrowserShot({ example, className = "" }: { example: Example; className?: string }) {
-  const host = new URL(example.url).host;
+  const host = "anypress.io/try";
   return (
     <div className={`shot-scroll overflow-hidden rounded-[14px] border-[1.5px] border-ink bg-panel shadow-[10px_10px_0_var(--honey)] ${className}`}>
       <div className="flex items-center gap-3 border-b-[1.5px] border-ink bg-paper-2 px-3 py-2">
