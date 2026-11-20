@@ -210,9 +210,9 @@ export function SiteTypePage({ type }: { type: string }) {
             </li>
           ))}
         </ul>
-        <a href={ex.url} target="_blank" rel="noopener" className="btn btn-honey !py-2.5">
-          Open the example ↗
-        </a>
+        <Link href={ex.url} className="btn btn-honey !py-2.5">
+          Open the example →
+        </Link>
       </section>
 
       <ProblemFix soft items={[...PROBLEMS.slice(0, 2), ...d.problems]} eyebrow="sound familiar?" title="Stop paying for your website one piece at a time." />
