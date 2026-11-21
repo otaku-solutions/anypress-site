@@ -1,0 +1,105 @@
+# Builds this repository's Coolify app into a Docker image on GitHub, instead of on the server that runs it
+# (release/README.md). Called by image-app.yml. A pull request builds the image and starts it. main also publishes it
+# to GHCR and moves the app's release branch, which Coolify deploys from, so the server only downloads an image that
+# already exists. Copied from otaku-solutions/anypress-api.
+name: Image
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        description: The image's name under ghcr.io/<owner>/ and of its release branch (release/<image>)
+        type: string
+        required: true
+      context:
+        description: The build context
+        type: string
+        required: true
+      file:
+        description: The Dockerfile
+        type: string
+        required: true
+      check-port:
+        description: Start the image and check this port answers; empty for an app that needs its database to start
+        type: string
+        default: ''
+      check-path:
+        description: The path the check asks for
+        type: string
+        default: /
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+      packages: write
+    env:
+      IMAGE: ghcr.io/${{ github.repository_owner }}/${{ inputs.image }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Full history, so the release push can tell that it moves the branch forward (see Release).
+          fetch-depth: 0
+      - uses: docker/setup-buildx-action@v3
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ inputs.context }}
+          file: ${{ inputs.file }}
+          load: true
+          tags: ${{ inputs.image }}:check
+          cache-from: type=gha,scope=${{ inputs.image }}
+          cache-to: type=gha,scope=${{ inputs.image }},mode=max
+      - name: Start it and check it answers
+        if: inputs.check-port != ''
+        env:
+          PORT: ${{ inputs.check-port }}
+          CHECK_PATH: ${{ inputs.check-path }}
+          TAG: ${{ inputs.image }}:check
+        run: |
+          docker run -d --name app -p "$PORT:$PORT" "$TAG"
+          for i in $(seq 1 60); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:$PORT$CHECK_PATH" || true)
+            if [ "$code" -ge 200 ] && [ "$code" -lt 500 ]; then echo "answered $code"; exit 0; fi
+            sleep 2
+          done
+          docker logs app
+          exit 1
+      - name: Image size
+        run: docker image inspect "${{ inputs.image }}:check" --format '{{.Size}}' | awk '{ printf "%.0f MB\n", $1 / 1000000 }'
+      - if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ inputs.context }}
+          file: ${{ inputs.file }}
+          push: true
+          # Coolify deploys the exact commit's image (release/<image>.Dockerfile), so there is no `latest`.
+          tags: ${{ env.IMAGE }}:sha-${{ github.sha }}
+          labels: org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          cache-from: type=gha,scope=${{ inputs.image }}
+      # Coolify deploys from this branch (release/<image>.Dockerfile), so it only ever picks up a commit whose image is
+      # already published. The push is never forced: GitHub accepts it only if it moves the branch forward, so a re-run
+      # of an older commit, or an older run that finishes after a newer one, leaves the newer release in place.
+      - name: Release
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        shell: bash
+        env:
+          BRANCH: release/${{ inputs.image }}
+        run: |
+          if git push origin "HEAD:refs/heads/$BRANCH"; then exit 0; fi
+          # Refused: fine only if a newer run already released a descendant of this commit (git says
+          # non-fast-forward or fetch first, depending on whether this checkout has that newer commit).
+          git fetch --quiet origin "refs/heads/$BRANCH"
+          if git merge-base --is-ancestor HEAD FETCH_HEAD; then
+            echo "$BRANCH already holds a newer commit; leaving it there"; exit 0
+          fi
+          exit 1
