@@ -85,12 +85,13 @@ $strip = function (string $text) use ($demoOnly, $ownForms): string {
         return $keep ? $m[0] : '';
     }, $text);
 };
-// Only a section's title and intro (one heading, one paragraph, spacers), with nothing left for them to introduce.
+// Only a section's title and intro (one heading, at most one paragraph, spacers), with nothing left for them to
+// introduce. Anything more, a kept code or a photo, and the section stays.
 $onlyTitles = static function (array $blocks): bool {
     $count = array_count_values(array_map(static fn ($b) => (string) $b['blockName'], $blocks));
     $other = array_diff_key($count, array_flip(['core/heading', 'core/paragraph', 'core/spacer']));
-    $codes = array_filter($blocks, static fn ($b) => strpos((string) $b['innerHTML'], '[') !== false);
-    return $other === [] && $codes === [] && ($count['core/heading'] ?? 0) <= 1 && ($count['core/paragraph'] ?? 0) <= 1;
+    $kept = array_filter($blocks, static fn ($b) => preg_match('/\[|<(img|video|audio|iframe|svg)\b/i', (string) $b['innerHTML']));
+    return $other === [] && $kept === [] && ($count['core/heading'] ?? 0) === 1 && ($count['core/paragraph'] ?? 0) <= 1;
 };
 // One block, with its codes taken out: null when nothing of it is left. $gone says whether a code took it all.
 $portable = function (array $block, ?bool &$gone = false) use (&$portable, $strip, $onlyTitles): ?array {

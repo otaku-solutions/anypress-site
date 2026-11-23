@@ -25,6 +25,16 @@ export interface Change {
 
 export const CHANGES: Change[] = [
   {
+    id: "demo-to-site-keeps-your-work",
+    date: "2026-11-23",
+    kind: "fixed",
+    minor: true,
+    title: "Making a demo your site keeps only your own work",
+    body: "When you turn a demo you changed on /try into your site, the demo's sample tables, charts, booking pages and sample forms stay behind, and the sections that only introduced them go too. Everything you wrote, your photos and your contact and newsletter forms come with you.",
+    for: [],
+    link: { href: "/try", label: "Try a demo" },
+  },
+  {
     id: "tables-and-charts",
     date: "2026-11-18",
     kind: "new",
