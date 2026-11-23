@@ -25,6 +25,15 @@ export interface Change {
 
 export const CHANGES: Change[] = [
   {
+    id: "tables-without-upsells",
+    date: "2026-11-23",
+    kind: "improved",
+    minor: true,
+    title: "Ninja Tables without the Pro upsells",
+    body: "The tables screens in your dashboard no longer show upgrade badges, locked Pro options, review requests or ads for other plugins. You see only the tools you can use.",
+    for: ["website", "bookings", "store", "community", "everything"],
+  },
+  {
     id: "demo-to-site-keeps-your-work",
     date: "2026-11-23",
     kind: "fixed",
