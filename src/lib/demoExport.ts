@@ -70,59 +70,66 @@ $ownForms = array_filter(array_map('intval', [get_option('anypress_crm_contact_f
 if (function_exists('wpFluent')) {
     $ownForms = array_merge($ownForms, array_map('intval', wpFluent()->table('fluentform_forms')->whereIn('title', ['Contact Form Demo', 'Contact form', 'Subscription Form', 'Newsletter sign-up'])->pluck('id')->toArray()));
 }
-$stays = function (array $block) use ($ownForms): bool {
-    $text = $block['blockName'] === 'core/shortcode' ? (string) $block['innerHTML'] : '';
-    if (preg_match('/\[(ninja_tables|ninja_charts|fluent_booking[a-z_]*)\b/', $text)) {
-        return true;
+// Each such code in a block's own text, read the way WordPress reads shortcodes: what's around it stays.
+$demoOnly = array_values(array_filter(array_keys($GLOBALS['shortcode_tags']), static fn ($tag) => preg_match('/^(ninja_tables|ninja_charts|fluent_booking[a-z_]*|fluentform)$/', $tag)));
+$strip = function (string $text) use ($demoOnly, $ownForms): string {
+    if ($demoOnly === [] || strpos($text, '[') === false) {
+        return $text;
     }
-    return preg_match('/\[fluentform\b[^\]]*\bid=["\']?(\d+)/', $text, $m) === 1 && !in_array((int) $m[1], $ownForms, true);
-};
-// Only headings and words (a section's title and intro), with nothing they introduce.
-$onlyText = function (array $blocks) use (&$onlyText): bool {
-    foreach ($blocks as $b) {
-        $text = in_array($b['blockName'], ['core/heading', 'core/paragraph', 'core/spacer', null], true);
-        if (!$text && !($b['blockName'] === 'core/group' && $onlyText($b['innerBlocks']))) {
-            return false;
+    return (string) preg_replace_callback('/' . get_shortcode_regex($demoOnly) . '/', static function ($m) use ($ownForms) {
+        if ($m[1] === '[' && $m[6] === ']') {
+            return $m[0]; // [[escaped]] shows as text
         }
-    }
-    return true;
+        $atts = (array) shortcode_parse_atts($m[3]);
+        $keep = $m[2] === 'fluentform' && in_array((int) ($atts['id'] ?? 0), $ownForms, true);
+        return $keep ? $m[0] : '';
+    }, $text);
 };
-$portable = function (array $blocks) use (&$portable, $stays, $onlyText): array {
-    $out = [];
-    foreach ($blocks as $block) {
-        if ($stays($block)) {
+// Only a section's title and intro, with nothing left for them to introduce.
+$onlyTitles = static fn (array $blocks): bool => array_filter($blocks, static fn ($b) => !in_array($b['blockName'], ['core/heading', 'core/paragraph', 'core/spacer', null], true)) === [];
+// One block, with its codes taken out: null when nothing of it is left. $gone says whether a code took it all.
+$portable = function (array $block, ?bool &$gone = false) use (&$portable, $strip, $onlyTitles): ?array {
+    $gone = false;
+    if (in_array($block['blockName'], ['core/shortcode', 'core/paragraph', null], true) && empty($block['innerBlocks'])) {
+        $text = $strip((string) $block['innerHTML']);
+        if ($text === $block['innerHTML']) {
+            return $block;
+        }
+        if (trim(wp_strip_all_tags($text)) === '') {
+            $gone = true;
+            return null;
+        }
+        $block['innerHTML'] = $text;
+        $block['innerContent'] = [$text];
+        return $block;
+    }
+    if (empty($block['innerBlocks'])) {
+        return $block;
+    }
+    $inner = [];
+    $content = [];
+    $removed = false;
+    $i = 0;
+    // The wrapper's own markup sits between its inner blocks, with a null for each: keep them in step.
+    foreach ($block['innerContent'] as $piece) {
+        if ($piece !== null) {
+            $content[] = $piece;
             continue;
         }
-        if (!empty($block['innerBlocks'])) {
-            $kept = [];
-            $content = [];
-            $i = 0;
-            $dropped = false;
-            // The wrapper's own markup sits between its inner blocks, with a null for each: keep them in step.
-            foreach ($block['innerContent'] as $piece) {
-                if ($piece !== null) {
-                    $content[] = $piece;
-                    continue;
-                }
-                $child = $block['innerBlocks'][$i++];
-                $left = $portable([$child]);
-                if ($left === []) {
-                    $dropped = true;
-                    continue;
-                }
-                $dropped = $dropped || $left[0] !== $child;
-                $kept[] = $left[0];
-                $content[] = null;
-            }
-            if ($dropped && $onlyText($kept)) {
-                continue;
-            }
-            $block['innerBlocks'] = $kept;
-            $block['innerContent'] = $content;
+        $child = $portable($block['innerBlocks'][$i++], $childGone);
+        $removed = $removed || $childGone;
+        if ($child !== null) {
+            $inner[] = $child;
+            $content[] = null;
         }
-        $out[] = $block;
     }
-    return $out;
+    // A section that only titled what came out goes too; anything else keeps what's left in it.
+    if ($removed && $onlyTitles($inner)) {
+        return null;
+    }
+    $block['innerBlocks'] = $inner;
+    $block['innerContent'] = $content;
+    return $block;
 };
 
 // What the demo's sample business wrote and the visitor left as it was: the store starts from its own pages instead.
@@ -139,7 +146,7 @@ foreach (get_posts(['post_type' => 'page', 'post_status' => ['publish', 'draft']
     $pages[] = [
         'title' => mb_substr(get_the_title($page) ?: $page->post_name, 0, 200),
         'slug' => $page->post_name,
-        'content' => $clean(serialize_blocks($portable(parse_blocks($page->post_content)))),
+        'content' => $clean(serialize_blocks(array_values(array_filter(array_map(static fn ($b) => $portable($b), parse_blocks($page->post_content)))))),
         'status' => $page->post_status === 'draft' ? 'draft' : 'publish',
     ];
 }
