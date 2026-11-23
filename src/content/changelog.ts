@@ -25,6 +25,14 @@ export interface Change {
 
 export const CHANGES: Change[] = [
   {
+    id: "starter-pages-with-survey-forms",
+    date: "2026-11-24",
+    kind: "new",
+    title: "13 ready-made pages, with forms that ask one question at a time",
+    body: "Add a quote request, project inquiry, client onboarding, home valuation, pickup order, visit planner, consultation booking and more from your page library. Each comes fully designed in your site's look, with real photos and text you can change. Their forms show one question at a time, like a short survey, so visitors finish them instead of facing one long form.",
+    for: ["website", "bookings", "store", "community", "everything"],
+  },
+  {
     id: "tables-without-upsells",
     date: "2026-11-23",
     kind: "improved",
