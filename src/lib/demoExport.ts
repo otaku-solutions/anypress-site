@@ -85,17 +85,22 @@ $strip = function (string $text) use ($demoOnly, $ownForms): string {
         return $keep ? $m[0] : '';
     }, $text);
 };
-// Only a section's title and intro, with nothing left for them to introduce.
-$onlyTitles = static fn (array $blocks): bool => array_filter($blocks, static fn ($b) => !in_array($b['blockName'], ['core/heading', 'core/paragraph', 'core/spacer', null], true)) === [];
+// Only a section's title and intro (one heading, one paragraph, spacers), with nothing left for them to introduce.
+$onlyTitles = static function (array $blocks): bool {
+    $count = array_count_values(array_map(static fn ($b) => (string) $b['blockName'], $blocks));
+    $other = array_diff_key($count, array_flip(['core/heading', 'core/paragraph', 'core/spacer']));
+    $codes = array_filter($blocks, static fn ($b) => strpos((string) $b['innerHTML'], '[') !== false);
+    return $other === [] && $codes === [] && ($count['core/heading'] ?? 0) <= 1 && ($count['core/paragraph'] ?? 0) <= 1;
+};
 // One block, with its codes taken out: null when nothing of it is left. $gone says whether a code took it all.
 $portable = function (array $block, ?bool &$gone = false) use (&$portable, $strip, $onlyTitles): ?array {
     $gone = false;
-    if (in_array($block['blockName'], ['core/shortcode', 'core/paragraph', null], true) && empty($block['innerBlocks'])) {
+    if (in_array($block['blockName'], ['core/shortcode', 'core/paragraph', 'core/freeform', null], true) && empty($block['innerBlocks'])) {
         $text = $strip((string) $block['innerHTML']);
         if ($text === $block['innerHTML']) {
             return $block;
         }
-        if (trim(wp_strip_all_tags($text)) === '') {
+        if (trim(strip_tags($text, '<img><video><audio><iframe><svg>')) === '') { // nothing left but empty markup
             $gone = true;
             return null;
         }
