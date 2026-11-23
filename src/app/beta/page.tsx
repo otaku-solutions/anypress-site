@@ -18,7 +18,7 @@ export const metadata: Metadata = pageMeta({
   path: "/beta",
   title: "Join the AnyPress beta",
   description:
-    "Finished WordPress sites built on the Fluent plugins: only the plugins you need, set up and connected, hosting and email handled, your old site moved in, and every site in one dashboard. The beta opens on 12 November.",
+    "Finished WordPress sites built on the Fluent plugins: only the plugins you need, set up and connected, hosting and email handled, your old site moved in, and every site in one dashboard. Beta invites are open now.",
 });
 
 const link = "font-semibold text-ink underline underline-offset-2";
@@ -112,7 +112,7 @@ const FACTS: Fact[] = [
     </>,
   ],
   ["chat", "What we ask", "Use it for something real, and tell us what gets in the way, by email or a support ticket from your site."],
-  ["clock", "Dates", "25 beta sites, invited in two waves on 12 and 19 November: places for 3 sellers or resellers and 10 website owners. Full launch on 1 December. Your site keeps running after the beta, with nothing to move."],
+  ["clock", "Dates", "25 beta sites, with invites going out now: places for 3 sellers or resellers and 10 website owners. Full launch on 1 December. Your site keeps running after the beta, with nothing to move."],
   [
     "server",
     "Where it runs",
@@ -217,7 +217,7 @@ const MOVES: Move[] = [
 
 const STEPS: [DrawingName, string, string, ReactNode][] = [
   ["note", "Join the list", "today", "Tell us what you'd build and what you'd move in. It takes a minute."],
-  ["mailbox", "Get your invite", "from 12 November", "We email your invite when your place is ready, with a link to start your site."],
+  ["mailbox", "Get your invite", "within a few days", "We email your invite when your place is ready, with a link to start your site."],
   ["pick", "Pick what you're building", "same day", "A website, bookings, an online store, a community with courses, or all of it. Add a card and it's ready to use the same day."],
   [
     "question",
@@ -246,7 +246,7 @@ export default function Beta() {
       <PageHero
         drawing="everything"
         side="both"
-        eyebrow="beta opens 12 November"
+        eyebrow="beta invites open now"
         title={
           <>
             A better WordPress experience with the <mark>Fluent</mark> plugins.
@@ -263,7 +263,7 @@ export default function Beta() {
           </Link>
         </div>
         <ul className="checks">
-          {["Invites from 12 November", "7 days free, then your plan", "Up to 5 sites for sellers", "Your Fluent Pro licences work"].map((c) => (
+          {["Invites open now", "7 days free, then your plan", "Up to 5 sites for sellers", "Your Fluent Pro licences work"].map((c) => (
             <li key={c}>
               <Tick />
               {c}
@@ -632,7 +632,7 @@ export default function Beta() {
       </section>
 
       <CtaBand
-        eyebrow="opens 12 November"
+        eyebrow="invites open now"
         title="Get your place in the beta."
         body="Tell us what you'd build, and we'll send your invite when your place is ready."
         href="#join"

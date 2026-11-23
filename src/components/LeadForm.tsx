@@ -112,7 +112,7 @@ function CampaignField() {
 /** What a person sees once the form has gone. */
 function Thanks({ beta, confirm }: { beta: boolean; confirm: boolean }) {
   const next = beta
-    ? "We'll email your invite when your place is ready. The first invites go out on 12 November."
+    ? "We'll email your invite when your place is ready, usually within a few days."
     : confirm
       ? "Then we'll send what you asked for."
       : "We'll send what you asked for shortly.";
