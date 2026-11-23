@@ -4,7 +4,8 @@
  * and the business details. Never plugins, code, users or settings. Photos from the media library become
  * `anypress-demo-image:<name>` and are listed with their file, so the page can send them to their upload links; the
  * rest of the demo's own address becomes a relative link, so theme images and page links work on the new store.
- * Pages and menus the demo's sample business made stay behind unless the visitor changed them.
+ * Pages and menus the demo's sample business made stay behind unless the visitor changed them, and a changed page
+ * loses the tables, charts, booking pages and sample forms that stay in the demo (the forms every store has stay).
  */
 
 export interface DemoImage {
@@ -61,6 +62,82 @@ $clean = function (string $blocks) use ($home, $photo): string {
     return str_replace([$home . '/', str_replace('/', '\/', $home) . '\/'], ['/', '\/'], $blocks);
 };
 
+// Records a page shows by id that stay in the demo (a Ninja table or chart, a booking page, a form the sample business
+// made): the new store has none of them, or something else under the same id. Their blocks come out, and so does a
+// section that only titled one. The forms every store comes with (Fluent Forms' contact and subscription forms, which
+// the sample only renames) keep their place.
+$ownForms = array_filter(array_map('intval', [get_option('anypress_crm_contact_form')]));
+if (function_exists('wpFluent')) {
+    $ownForms = array_merge($ownForms, array_map('intval', wpFluent()->table('fluentform_forms')->whereIn('title', ['Contact Form Demo', 'Contact form', 'Subscription Form', 'Newsletter sign-up'])->pluck('id')->toArray()));
+}
+// Each such code in a block's own text, read the way WordPress reads shortcodes: what's around it stays.
+$demoOnly = array_values(array_filter(array_keys($GLOBALS['shortcode_tags']), static fn ($tag) => preg_match('/^(ninja_tables|ninja_charts|fluent_booking[a-z_]*|fluentform)$/', $tag)));
+$strip = function (string $text) use ($demoOnly, $ownForms): string {
+    if ($demoOnly === [] || strpos($text, '[') === false) {
+        return $text;
+    }
+    return (string) preg_replace_callback('/' . get_shortcode_regex($demoOnly) . '/', static function ($m) use ($ownForms) {
+        if ($m[1] === '[' && $m[6] === ']') {
+            return $m[0]; // [[escaped]] shows as text
+        }
+        $atts = (array) shortcode_parse_atts($m[3]);
+        $keep = $m[2] === 'fluentform' && in_array((int) ($atts['id'] ?? 0), $ownForms, true);
+        return $keep ? $m[0] : '';
+    }, $text);
+};
+// Only a section's title and intro (one heading, at most one paragraph, spacers), with nothing left for them to
+// introduce. Anything more, a kept code or a photo, and the section stays.
+$onlyTitles = static function (array $blocks): bool {
+    $count = array_count_values(array_map(static fn ($b) => (string) $b['blockName'], $blocks));
+    $other = array_diff_key($count, array_flip(['core/heading', 'core/paragraph', 'core/spacer']));
+    $kept = array_filter($blocks, static fn ($b) => preg_match('/\[|<(img|video|audio|iframe|svg)\b/i', (string) $b['innerHTML']));
+    return $other === [] && $kept === [] && ($count['core/heading'] ?? 0) === 1 && ($count['core/paragraph'] ?? 0) <= 1;
+};
+// One block, with its codes taken out: null when nothing of it is left. $gone says whether a code took it all.
+$portable = function (array $block, ?bool &$gone = false) use (&$portable, $strip, $onlyTitles): ?array {
+    $gone = false;
+    if (in_array($block['blockName'], ['core/shortcode', 'core/paragraph', 'core/freeform', null], true) && empty($block['innerBlocks'])) {
+        $text = $strip((string) $block['innerHTML']);
+        if ($text === $block['innerHTML']) {
+            return $block;
+        }
+        if (trim(strip_tags($text, '<img><video><audio><iframe><svg>')) === '') { // nothing left but empty markup
+            $gone = true;
+            return null;
+        }
+        $block['innerHTML'] = $text;
+        $block['innerContent'] = [$text];
+        return $block;
+    }
+    if (empty($block['innerBlocks'])) {
+        return $block;
+    }
+    $inner = [];
+    $content = [];
+    $removed = false;
+    $i = 0;
+    // The wrapper's own markup sits between its inner blocks, with a null for each: keep them in step.
+    foreach ($block['innerContent'] as $piece) {
+        if ($piece !== null) {
+            $content[] = $piece;
+            continue;
+        }
+        $child = $portable($block['innerBlocks'][$i++], $childGone);
+        $removed = $removed || $childGone;
+        if ($child !== null) {
+            $inner[] = $child;
+            $content[] = null;
+        }
+    }
+    // A section that only titled what came out goes too; anything else keeps what's left in it.
+    if ($removed && $onlyTitles($inner)) {
+        return null;
+    }
+    $block['innerBlocks'] = $inner;
+    $block['innerContent'] = $content;
+    return $block;
+};
+
 // What the demo's sample business wrote and the visitor left as it was: the store starts from its own pages instead.
 $sample = function (WP_Post $post): bool {
     $mark = (string) get_post_meta($post->ID, '_anypress_sample', true);
@@ -75,7 +152,7 @@ foreach (get_posts(['post_type' => 'page', 'post_status' => ['publish', 'draft']
     $pages[] = [
         'title' => mb_substr(get_the_title($page) ?: $page->post_name, 0, 200),
         'slug' => $page->post_name,
-        'content' => $clean($page->post_content),
+        'content' => $clean(serialize_blocks(array_values(array_filter(array_map(static fn ($b) => $portable($b), parse_blocks($page->post_content)))))),
         'status' => $page->post_status === 'draft' ? 'draft' : 'publish',
     ];
 }
