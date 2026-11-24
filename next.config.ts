@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
   // The two customer groups whose page lives elsewhere, so /who/<group> works for every group.
   async redirects() {
     return [
+      // Short address for the Swipe package protection concept demo (a Playground blueprint pinned to a commit).
+      { source: "/try/swipe", destination: "/try?blueprint=https%3A%2F%2Fraw.githubusercontent.com%2Fotaku-solutions%2Fanypress-api%2Fb551b953355cb6c24a4a7d10387175701daadeee%2Fdemos%2Fswipe%2Fonline-store-swipe.json&title=Swipe%20Package%20Protection", permanent: false },
       // The old "b" addresses from the copy test, which ended 2026-11-12.
       { source: "/home-b", destination: "/", permanent: true },
       { source: "/pricing-b", destination: "/pricing", permanent: true },
