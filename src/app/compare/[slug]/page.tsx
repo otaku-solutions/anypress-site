@@ -3,10 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CompareTable } from "@/components/CompareTable";
 import { Drawing } from "@/components/Drawing";
-import { CtaBand, PageHero, SectionHead } from "@/components/ui";
+import { CtaBand, PageHero, Questions, SectionHead } from "@/components/ui";
 import { COMPARISONS } from "@/lib/compare";
 import { JsonLd } from "@/components/JsonLd";
-import { breadcrumbLd, pageMeta } from "@/lib/seo";
+import { breadcrumbLd, faqLd, pageMeta } from "@/lib/seo";
 
 export function generateStaticParams() {
   return COMPARISONS.map((c) => ({ slug: c.slug }));
@@ -27,7 +27,7 @@ export default async function ComparePage({ params }: PageProps<"/compare/[slug]
 
   return (
     <>
-      <JsonLd data={breadcrumbLd([["Compare", "/compare"], [`AnyPress vs ${c.name}`, `/compare/${c.slug}`]])} />
+      <JsonLd data={[faqLd(c.questions), breadcrumbLd([["Compare", "/compare"], [`AnyPress vs ${c.name}`, `/compare/${c.slug}`]])]} />
       <PageHero side={c.side} drawing="scales" eyebrow={`AnyPress vs ${c.name}`} title={c.title} lead={c.lead} />
 
       <section className="sec soft !pt-16">
@@ -35,6 +35,15 @@ export default async function ComparePage({ params }: PageProps<"/compare/[slug]
           <CompareTable head={["What you need", c.name, "AnyPress"]} rows={c.rows} />
         </div>
       </section>
+
+      {c.more?.map((m, i) => (
+        <section key={m.title} className={i % 2 ? "sec soft" : "sec"}>
+          <div className="in">
+            <SectionHead eyebrow={m.eyebrow} title={m.title} lead={m.lead} />
+            <CompareTable head={m.head} rows={m.rows} />
+          </div>
+        </section>
+      ))}
 
       <section className="sec in">
         <SectionHead eyebrow="being fair" title="Which one is right for you?" />
@@ -50,6 +59,11 @@ export default async function ComparePage({ params }: PageProps<"/compare/[slug]
             <p className="mt-2 text-ink-soft">{c.ours}</p>
           </div>
         </div>
+      </section>
+
+      <section className="sec in">
+        <SectionHead drawing="question" title={`Questions about AnyPress and ${c.name}`} id="h-faq" />
+        <Questions items={c.questions} firstOpen />
       </section>
 
       <section className="sec soft">

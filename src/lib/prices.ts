@@ -77,3 +77,8 @@ export const WP_HOST: OtherPlan = {
   note: "Hosting only: you pick, install and set up every plugin",
   url: "https://kinsta.com/pricing/",
 };
+
+// MainWP, for /compare/mainwp: its Pro licence for unlimited sites, in US dollars a year, read from
+// https://mainwp.com/pricing/ on 27 November 2026 (the regular price; it also sells $29 a month or $599 once).
+// Its free version needs no licence; hosting and backup storage are paid separately.
+export const MAINWP_PRO_YEARLY = 199;
