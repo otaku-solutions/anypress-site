@@ -25,6 +25,16 @@ export interface Change {
 
 export const CHANGES: Change[] = [
   {
+    id: "compare-mainwp",
+    date: "2026-11-27",
+    kind: "new",
+    minor: true,
+    title: "Side-by-sides with MainWP, and more detail on every comparison",
+    body: "See how AnyPress compares with MainWP if you sell websites, with what each one leaves for you to do after a site is sold and before it's built. Every comparison page now goes into more detail and answers the questions people ask.",
+    for: [],
+    link: { href: "/compare/mainwp", label: "AnyPress vs MainWP" },
+  },
+  {
     id: "starter-pages-with-survey-forms",
     date: "2026-11-24",
     kind: "new",
