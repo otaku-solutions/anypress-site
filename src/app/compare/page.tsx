@@ -9,10 +9,10 @@ import { pageMeta } from "@/lib/seo";
 
 export const metadata: Metadata = pageMeta({
   path: "/compare",
-  title: "Compare AnyPress with hosting, multisite and more",
+  title: "Compare AnyPress with hosting, multisite, MainWP and more",
   card: "Compare",
   description:
-    "AnyPress prices next to Shopify, Squarespace, Wix, Kajabi, Circle and Skool, and how it compares with regular hosting, WordPress multisite, WP Ultimo and ManageWP.",
+    "AnyPress prices next to Shopify, Squarespace, Wix, Kajabi, Circle and Skool, and how it compares with regular hosting, WordPress multisite, WP Ultimo, ManageWP and MainWP.",
 });
 
 export default function Compare() {
